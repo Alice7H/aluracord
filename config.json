@@ -1,5 +1,5 @@
 {
-  "name": "Aluracord - Matrix",
+  "name": "Aluracord",
   "theme": {
     "colors": {
       "primary": {
@@ -30,6 +30,17 @@
       }
     }
   },
+  "backgrounds": [
+    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+    "https://img.wallpapersafari.com/desktop/1536/864/22/58/OL6CSj.jpg",
+    "https://img.wallpapersafari.com/desktop/1536/864/1/41/junwY5.jpg",
+    "https://img.wallpapersafari.com/desktop/1536/864/51/14/KtcY69.jpg",
+    "https://img.wallpapersafari.com/desktop/1536/864/97/99/kFMRBm.jpg",
+    "https://img.wallpapersafari.com/desktop/1024/576/25/17/sejgr0.jpg",
+    "https://images.unsplash.com/photo-1498026474556-93048b8493d8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1469&q=80",
+    "https://cdn.iconscout.com/icon/free/png-512/error-1659451-1409973.png",
+    "https://image.freepik.com/vetores-gratis/secao-de-perguntas-frequentes-do-site-help-desk-do-usuario-suporte-ao-cliente-perguntas-frequentes-solucao-de-problema-jogo-de-perguntas-personagem-de-desenho-animado-do-homem-confuso_335657-1602.jpg"
+  ],
   "stickers": [
     "https://www.alura.com.br/imersao-react-4/assets/figurinhas/Figurinha_1.png",
     "https://www.alura.com.br/imersao-react-4/assets/figurinhas/Figurinha_2.png",

@@ -1,63 +1,31 @@
+import { useState } from 'react';
+import { useRouter } from 'next/router';
 import { Box, Button, Text, TextField, Image} from '@skynexui/components';
 import appConfig from '../config.json';
-
-function GlobalStyle() {
-  return (
-    <style global jsx>{`
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        list-style: none;
-      }
-      body {
-        font-family: 'Open Sans',sans-serif;
-      }
-      /* App fit Height */ 
-      html, body, #__next {
-        min-height: 100vh;
-        display: flex;
-        flex: 1;
-      }
-      #__next {
-        flex: 1;
-      }
-      #__next > * {
-        flex: 1;
-      }
-      /* ./App fit Height */ 
-    `}</style>
-  );
-}
-
-function Title(props) {
-  const Tag = props.tag || 'h1';
-  return (
-    <>
-    <Tag>{props.children}</Tag>
-    <style jsx>{`
-      ${Tag} {
-        color: ${appConfig.theme.colors.primary['900']};
-        font-size: 24px;
-        font-weight: 600;
-      }    
-    `}</style>
-    </>
-  );
-}
+import Title from '../components/Title';
 
 export default function PaginaInicial() {
-  const username = 'Alice7H';
+  const [username, setUsername] = useState('alice7h');
+  const isValid = username.length > 2;
+  const router = useRouter();
+
+  const handleChangeUsername = (event) => {
+    setUsername(event.target.value);
+  }
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    isValid ? router.push(`/chat/${username}`) : alert('Nome de usuário inválido');
+  }
 
   return (
     <>
-      <GlobalStyle />
       <Box
         tag="main"
         styleSheet={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          backgroundColor: appConfig.theme.colors.primary['900'],
-          backgroundImage: 'url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)',
+          backgroundColor: appConfig.theme.colors.primary['050'],
+          backgroundImage: `url(${appConfig.backgrounds[3]})`,
           backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply', backgroundPosition: 'center'
         }}
       >
@@ -74,23 +42,29 @@ export default function PaginaInicial() {
             width: '100%', maxWidth: '700px',
             borderRadius: '5px', padding: '32px', margin: '16px',
             boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
-            backgroundColor: appConfig.theme.colors.neutrals[700],
+            backgroundColor: appConfig.theme.colors.neutrals[999],
           }}
         >
           {/* Formulário */}
           <Box
             as="form"
+            onSubmit={handleSubmit}
             styleSheet={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
               width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
             }}
           >
-            <Title tag="h2">Boas vindas de volta!</Title>
+            <Title tag="h2">Seja Bem-Vindo(a)!</Title>
             <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals[300] }}>
-              {appConfig.name}
+              {appConfig.name} - {username}
             </Text>
 
+            <label htmlFor="username">Informe o seu nome de usuário</label>
             <TextField
+              id="username"
+              placeholder="Informe o seu nome de usuário"
+              value={username}
+              onChange={handleChangeUsername}
               fullWidth
               textFieldColors={{
                 neutral: {
@@ -101,6 +75,7 @@ export default function PaginaInicial() {
                 },
               }}
             />
+
             <Button
               type='submit'
               label='Entrar'
@@ -114,7 +89,6 @@ export default function PaginaInicial() {
             }/>
           </Box>
           {/* Formulário */}
-
 
           {/* Photo Area */}
           <Box
@@ -132,12 +106,8 @@ export default function PaginaInicial() {
               minHeight: '240px',
             }}
           >
-            <Image
-              styleSheet={{
-                borderRadius: '50%',
-                marginBottom: '16px',
-              }}
-              src={`https://github.com/${username}.png`}
+            <Image styleSheet={{ borderRadius: '50%', marginBottom: '16px'}}
+              src={ isValid ?`https://github.com/${username}.png` : `${appConfig.backgrounds[0]}`}
             />
             <Text
               variant="body4"
