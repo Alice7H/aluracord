@@ -21,13 +21,14 @@ export default function PaginaNaoEncontrada () {
       }}
     >
       <Box
-          tag="section"
-          styleSheet={{
-            backgroundColor: appConfig.theme.colors.neutrals['900'],
-            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-            width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
-          }}
-        >
+        tag="section"
+        styleSheet={{
+          backgroundColor: appConfig.theme.colors.neutrals['900'],
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
+          borderRadius: '5px',
+        }}
+      >
         <Image styleSheet={{ borderRadius: '50%', marginBottom: '16px', width: '200px'}}
             src={`${appConfig.backgrounds[7]}`}
         />
