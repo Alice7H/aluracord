@@ -28,3 +28,22 @@
 - Criar um campo que ao apertamos o "Enter", faz o submit das informações;
 - Colocar o botão de OK para enviar a mensagem
 - Colocar um botão de apagar mensagem! Dica: use o filter
+
+4º Dia
+
+- AJAX e o que é?
+- Supabase
+- Aba network para debugarmos requests HTTP
+- useEffect no React
+- Mostrar o loading de mensagens
+- Fazer um efeito quando passar o mouse em cima
+
+Criado um ambiente local (.env.local) com:
+
+- NEXT_PUBLIC_SUPABASE_URL
+- NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+5º Dia
+
+- Web Sockets
+- E adicionar os stickers

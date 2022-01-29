@@ -17,7 +17,7 @@ export default function PaginaInicial() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    router.push(`/chat`);
+    router.push(`/chat?username=${username}`);
   }
 
   return (
@@ -122,6 +122,7 @@ export default function PaginaInicial() {
           </Box>
           {/* Photo Area */}
         </Box>
+        {/* Informações do usuário */}
         <Box tag="section"
           styleSheet={{
             display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
@@ -139,6 +140,7 @@ export default function PaginaInicial() {
           <p>Github: {user?.html_url || 'indefinido' }</p>
           <p>Repositórios públicos: {user?.public_repos || 0 }</p>
         </Box>
+         {/* Informações do usuário */}
       </Box>
       <style jsx>
         {`p { 
