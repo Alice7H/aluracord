@@ -45,5 +45,12 @@ Criado um ambiente local (.env.local) com:
 
 5º Dia
 
-- Web Sockets
+- Web Sockets (realtime listener)
 - E adicionar os stickers
+
+Às vezes o useState pode aparecer com o valor inicial e
+depois carregar outro valor de um efeito colateral, por isso:
+
+" Para reusar um valor de referência (objeto, array), passe uma função para o setState.
+Ex:
+setMessages((prev)=> [newMessage, ...prev]) "

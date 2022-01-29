@@ -1,4 +1,4 @@
-import appConfig from '../config.json';
+import appConfig from '../../config.json';
 
 export default function Loading(props) {
   const user = props.user || '';

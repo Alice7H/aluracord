@@ -1,69 +1,68 @@
-import { useState, useEffect, useCallback} from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import appConfig from '../config.json';
-import Header from '../components/Header';
-import MessageList from '../components/MessageList';
-import MessageForm from '../components/MessageForm';
 import { Box } from '@skynexui/components';
-import { supabaseClient } from '../utils/supabase';
+import appConfig from '../config.json';
+import Header from '../src/components/Header';
+import MessageList from '../src/components/MessageList';
+import MessageForm from '../src/components/MessageForm';
+import { supabaseClient } from '../src/utils/supabase';
 
 export default function PaginaDoChat() {
   const router = useRouter();
   const usuarioLogado = router.query.username;
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  
+  const [isLoading, setIsLoading] = useState(false);
+
   const getMessages = async () => {
     const { data,error } = await supabaseClient.from('mensagens').select('*').order('id', {ascending: false});
     data ? setMessages(data) : console.log(error);
     setIsLoading(false);
   };
-  
-  useCallback(()=>{
-    getMessages();
-  },[messages])
 
+  // const listenerMessagesRealTime = () => {
+  //   return supabaseClient.from('mensagens').on('*', payload => {
+  //     console.log('Change received!', payload.eventType);
+  //   }).subscribe();
+  // }
+  
   useEffect(()=>{
     getMessages();
+    // const subscription = listenerMessagesRealTime();
+    // return () => subscription.unsubscribe();
   },[]);
  
-  const handleChangeMessage = (event) => {
-    setMessage(event.target.value);
-  }
+  const handleChangeMessage = (value) => setMessage(value)
   
-  const handleKeyPress = (event) => {
-    if(event.code === 'Enter') {
-      event.preventDefault();
-      _saveMessages();
-    }
-  }
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    _saveMessages();
-  }
-
-  const _saveMessages = () => {
+  const handleSubmit = (texto) => { 
     const msg = {
-      de: user,
-      texto: message,
+      de: usuarioLogado,
+      texto: texto,
     }
-    if(message != ''){
+    if(texto != '' && usuarioLogado != null){
       // insert supabase
       supabaseClient.from('mensagens').insert(msg)
       .then(({data,error}) => {
-        if(data) {
-          console.log('message inserted');
-          setMessages(prev => [data[0], ...prev]) 
-        }else {
-          console.log(error);
-        }
-      })
+        data 
+        ? setMessages(prev => [data[0], ...prev]) && console.log('message inserted') 
+        : console.log(error);
+      });
+
       setMessage('');
-    }else {
+    }else{
       alert('Insira sua mensagem');
     }
+  }
+
+  const handleKeyPress = (event) => {
+    if(event.code === 'Enter') {
+      event.preventDefault();
+      handleSubmit(message);
+    }
+  }
+
+  const handleClickSticker = (sticker) => {
+    handleSubmit(`:sticker:${sticker}`);
   }
 
   const handleRemoveMessage = (id) => {
@@ -81,6 +80,7 @@ export default function PaginaDoChat() {
         });
      }
   }
+
 
   return(
     <Box
@@ -125,6 +125,7 @@ export default function PaginaDoChat() {
             handleSubmit={handleSubmit} 
             handleChangeMessage={handleChangeMessage}
             handleEnter={handleKeyPress} 
+            handleClickSticker={handleClickSticker}
           />
         </Box> 
       </Box>

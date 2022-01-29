@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { Box, Button, Text, TextField, Image} from '@skynexui/components';
 import appConfig from '../config.json';
-import Title from '../components/Title';
-import useGitHubUser from '../hooks/useGitHubUser';
+import Title from '../src/components/Title';
+import useGitHubUser from '../src/hooks/useGitHubUser';
 
 export default function PaginaInicial() {
   const [username, setUsername] = useState('alice7h');

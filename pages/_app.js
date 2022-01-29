@@ -1,4 +1,4 @@
-import GlobalStyle from "../components/GlobalStyle";
+import GlobalStyle from "../src/components/GlobalStyle";
 import Head from 'next/head';
 
 export default function MyApp({ Component, pageProps }) {
