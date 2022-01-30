@@ -25,7 +25,7 @@ export default function MessageList(props) {
             tag="li"
             styleSheet={{
               borderRadius: '5px', padding: '6px',
-              margin: '0px 20px 12px 20px',
+              margin: '10px 20px 12px 20px',
               backgroundColor: appConfig.theme.colors.neutrals[600],
               hover: {
                 backgroundColor: appConfig.theme.colors.neutrals[800],
@@ -33,19 +33,13 @@ export default function MessageList(props) {
             }}
           >
             <Box styleSheet={{ marginBottom: '8px', minHeight: '35px'}}>
-              <Image
+              <Image className="hover-compatibility"
                 styleSheet={{
-                  width: '25px', height: '25px',
-                  borderRadius: '50%',
-                  display: 'inline-block',
-                  marginRight: '8px',
-                  cursor: 'zoom-in',              
+                  display: 'inline-block', borderRadius: '50%', cursor: 'pointer',              
+                  width: 'px', height: '25px', marginRight: '8px',  
                   hover: {
-                    borderRadius: '8px',
+                    width: '200px', height: '200px', zIndex: 10, borderRadius: '8px',
                     position: 'absolute', top: '20px', left: 'calc(50% - 100px)',
-                    width: '200px', 
-                    height: '200px',
-                    zIndex: 10,
                   }
                 }}
                 src={`https://github.com/${mensagem.de}.png`}
@@ -85,6 +79,19 @@ export default function MessageList(props) {
             }
           </Text>
         )}
+        <style jsx>
+        {`
+          .hover-compatibility:hover {
+            border-radius: 8px;
+            position: absolute; 
+            top: 20px; 
+            left: calc(50% - 100px);
+            height: 200px; 
+            width: 200px; 
+            z-index: 10;
+          }
+        `}
+        </style>
       </Box>
     </>
   );

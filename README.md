@@ -1,4 +1,6 @@
-<!-- screenshot -->
+<h1 align="center">
+  <img alt="Aluracord" title="#Aluracord" src="public/images/banner.png" />
+</h1>
 
 # Aluracord
 
@@ -20,6 +22,7 @@ As seguintes ferramentas/bibliotecas foram usadas na construção do projeto:
 - [Next](https://nextjs.org/)
 - [Supabase](https://supabase.com)
 - [SkynexUI](https://skynexui.dev/)
+- [react-hot-toast](https://react-hot-toast.com/)
 
 ## Pré-requisitos
 

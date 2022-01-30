@@ -3,20 +3,28 @@ import { useRouter } from 'next/router';
 import { Box } from '@skynexui/components';
 import appConfig from '../config.json';
 import Header from '../src/components/Header';
+import ProfileBox from '../src/components/ProfileBox';
 import MessageList from '../src/components/MessageList';
 import MessageForm from '../src/components/MessageForm';
 import { supabaseClient } from '../src/utils/supabase';
+import useGitHubUser from '../src/hooks/useGitHubUser';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function PaginaDoChat() {
   const router = useRouter();
   const usuarioLogado = router.query.username;
+  const currentGithubUser = useGitHubUser(usuarioLogado);
+
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(true);
+  
   const getMessages = async () => {
     const { data,error } = await supabaseClient.from('mensagens').select('*').order('id', {ascending: false});
-    data ? setMessages(data) : console.log(error);
+    data ? setMessages(data) : (
+      toast.error('Não foi possível encontrar as mensagens.') 
+      && console.log(error)
+    );
     setIsLoading(false);
   };
 
@@ -43,14 +51,16 @@ export default function PaginaDoChat() {
       // insert supabase
       supabaseClient.from('mensagens').insert(msg)
       .then(({data,error}) => {
-        data 
-        ? setMessages(prev => [data[0], ...prev]) && console.log('message inserted') 
-        : console.log(error);
+        data ? setMessages(prev => [data[0], ...prev]) 
+        : (
+          toast.error('Não foi possível enviar sua mensagem.')
+          && console.log(error)
+        );
       });
 
       setMessage('');
     }else{
-      alert('Insira sua mensagem');
+      toast.error('Insira sua mensagem');
     }
   }
 
@@ -75,25 +85,26 @@ export default function PaginaDoChat() {
             const res = messages.filter(message => message.id !== data[0].id);
             setMessages(res);
           }else {
+            toast.error("Não foi possível deletar a mensagem. Tente mais tarde")
             console.log(error);
           }
         });
      }
   }
 
-
   return(
     <Box
       styleSheet={{
         display: 'flex', alignItems: 'center', justifyContent: 'center', 
-        backgroundColor: appConfig.theme.colors.primary['050'],
-        backgroundImage: `url(${appConfig.backgrounds[3]})`,
+        backgroundColor: appConfig.theme.colors.primary['600'],
+        backgroundImage: `url(${appConfig.backgrounds[2]})`,
         backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 
         backgroundBlendMode: 'multiply',
         color: appConfig.theme.colors.neutrals['000'],
       }}
     >    
-      <Box styleSheet={{
+      <Box 
+        styleSheet={{
           backgroundColor: appConfig.theme.colors.neutrals['900'],
           borderRadius: '5px',
           boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
@@ -102,31 +113,53 @@ export default function PaginaDoChat() {
           maxWidth: '95%' , padding: '32px',
         }}
       >
-        <Header />
+        <Toaster position="top-right" reverseOrder={false} />
+        
+        <Header user={currentGithubUser}/>
+        
         <Box as="main" 
           styleSheet={{
-            backgroundColor: appConfig.theme.colors.neutrals[900],
+            backgroundColor: appConfig.theme.colors.neutrals[900],           
             color: appConfig.theme.colors.neutrals['050'],
             borderRadius: '5px', padding: '16px',
-            display: 'flex', flex: 1, flexDirection: 'column',
-            height: '80%', width: '100%',
-            position: 'relative', alignItems: 'left', lineHeight: '24px',
+            display: 'flex', 
+            flexDirection: {xs:'column', md: 'row'},
+            height: '90%', width: '100%',
+            position: 'relative', alignItems: 'flex-start', lineHeight: '24px',
           }}>
+
+          <Box as="aside"
+            styleSheet={{
+              backgroundColor: appConfig.theme.colors.neutrals['900'],
+              color: appConfig.theme.colors.neutrals['050'],
+              display: {xs:'none', md:'flex'},
+              flexDirection: 'column',
+              width: {sm:'100%', md:'20%'},
+              marginBottom: '10px',
+            }}
+          > 
+            <ProfileBox user={currentGithubUser}/>
+          </Box>
+
+          <Box tag="section"
+            styleSheet={{ display: 'flex', width: {xs: '100%',md:'80%'}, 
+            flexDirection: 'column', height: '100%',
+          }}>
+            <MessageList 
+              mensagens={messages} 
+              onClick={handleRemoveMessage} 
+              user={usuarioLogado}
+              isLoading={isLoading}
+            />
           
-          <MessageList 
-            mensagens={messages} 
-            onClick={handleRemoveMessage} 
-            user={usuarioLogado}
-            isLoading={isLoading}
-          />
-          
-          <MessageForm 
-            message={message} 
-            handleSubmit={handleSubmit} 
-            handleChangeMessage={handleChangeMessage}
-            handleEnter={handleKeyPress} 
-            handleClickSticker={handleClickSticker}
-          />
+            <MessageForm 
+              message={message} 
+              handleSubmit={handleSubmit} 
+              handleChangeMessage={handleChangeMessage}
+              handleEnter={handleKeyPress} 
+              handleClickSticker={handleClickSticker}
+            />
+          </Box>
         </Box> 
       </Box>
     </Box>

@@ -19,7 +19,7 @@ export default function MessageForm(props) {
       }} 
         styleSheet={{
           display: 'flex', 
-          alignItems: 'center', 
+          alignItems: 'center',
           justifyContent: 'space-between',
         }}>
           
@@ -27,12 +27,13 @@ export default function MessageForm(props) {
 
         <TextField as="textarea"
          label="Insira sua mensagem aqui..."
-         placeholder="Insira sua mensagem aqui..." 
-         id="message" 
+         placeholder="Insira sua mensagem aqui..."
+         name="mensagem" 
+         id="mensagem" 
          styleSheet={{ 
           width: '100%', resize: 'none',
           border: '0', borderRadius: '5px', 
-          marginRight: '12px', padding: '6px 8px',
+          marginRight: '12px',
           backgroundColor: appConfig.theme.colors.neutrals[800],
           color: appConfig.theme.colors.neutrals[200],
         }}
