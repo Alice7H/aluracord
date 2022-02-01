@@ -64,3 +64,17 @@ Para reusar um valor de referência (objeto/array), passe uma função para o se
 - BUG FIXED: Loading não estava aparecendo
 - CHANGED: Redirecionamento para uma nova aba ao clicar no nome do usuário da mensagem
 - CHANGED AND REMOVED: Os planos de fundo.
+
+- Criar modal para confirmar remoção de mensagens.
+- Sair da caixa de confirmação de remoção da mensagem com o ESC
+- Sair da caixa de perfil do usuário com o ESC
+- Fechar as caixas quando clicar foras delas
+- Criar lista de seguidores e de quem sigo
+- Escutando o supabase realtime
+- FIXED BUG: Os texto no ProfileBox e no ConfirmAlert estão passando das caixas de texto
+
+## Futuro:
+
+- Otimizar código
+- Fazer upload de imagens (.png, .jpeg, .gif)
+- Fazer upload de arquivos (.pdf, zz.txt, .doc, .excel)

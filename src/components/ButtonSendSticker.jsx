@@ -1,9 +1,13 @@
 import { useState } from 'react';
 import { Box, Button, Text, Image } from '@skynexui/components';
 import appConfig from '../../config.json';
+import useOnClickOutside from '../hooks/useOnClickOutside';
+import useEscapeListen from '../hooks/useEscapeListen';
 
 export default function ButtonSendSticker(props) {
-  const [isOpen, setOpenState] = useState('');
+  const [isOpen, setOpenState] = useState(false);
+  useEscapeListen(()=>setOpenState(false));
+  useOnClickOutside('#buttonSendSticker','#toggleButtonSendSticker',()=>setOpenState(false));
 
   function handleSticker(sticker) { 
     if (Boolean(props.onStickerClick)) {
@@ -12,12 +16,9 @@ export default function ButtonSendSticker(props) {
   }
 
   return (
-    <Box
-      styleSheet={{
-        position: 'relative',
-      }}
-    >
+    <>
       <Button
+        id="toggleButtonSendSticker"
         styleSheet={{
           borderRadius: '50%',
           padding: '0 3px 0 0',
@@ -40,7 +41,7 @@ export default function ButtonSendSticker(props) {
         onClick={() => setOpenState(!isOpen)}
       />
       {isOpen && (
-        <Box
+        <Box id="buttonSendSticker"
           styleSheet={{
             display: 'flex',
             flexDirection: 'column',
@@ -57,7 +58,7 @@ export default function ButtonSendSticker(props) {
             padding: '16px',
             boxShadow: 'rgba(4, 4, 5, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.24) 0px 8px 16px 0px',
           }}
-          onClick={() => setOpenState(false)}
+          // onClick={() => setOpenState(false)}
         >
           <Text
             styleSheet={{
@@ -100,6 +101,6 @@ export default function ButtonSendSticker(props) {
           </Box>
         </Box>
       )}
-    </Box>
+    </>
   )
 }

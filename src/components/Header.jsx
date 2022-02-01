@@ -2,9 +2,13 @@ import { useState } from 'react';
 import { Box, Text, Button } from '@skynexui/components';
 import appConfig from '../../config.json';
 import ProfileBox from '../components/ProfileBox';
+import useEscapeListen from '../hooks/useEscapeListen';
+import useOnClickOutside from '../hooks/useOnClickOutside';
 
 export default function Header(props) {
   const [isOpenProfile, setIsOpenProfile] = useState(false);
+  useEscapeListen(()=>setIsOpenProfile(false))
+  useOnClickOutside('#profileBox','#toggleOpenProfile', ()=>setIsOpenProfile(false));
 
   return (
       <>
@@ -27,6 +31,7 @@ export default function Header(props) {
                flexDirection: 'row', justifyContent: 'space-between',
             }}>
               <Button 
+                id="toggleOpenProfile"
                 name="Ver perfil"
                 iconName="FaUser" 
                 onClick={()=>setIsOpenProfile(!isOpenProfile)}
@@ -51,16 +56,18 @@ export default function Header(props) {
               />
             </Box>
             { isOpenProfile && 
-              <Box 
-                styleSheet={{ 
+              <Box id="profileBox"
+                styleSheet={{
                   position: 'fixed', 
                   zIndex: '2', left: '10%', top: '120px',
-                  width: '80%', height: '65%', padding: '20px',
+                  width: '80%', height: '70%', padding: '20px',
                   backgroundColor: appConfig.theme.colors.neutrals['800'],
                   color: appConfig.theme.colors.neutrals['000'],
+                  border: `2px ridge ${appConfig.theme.colors.neutrals['200']}`,
                   borderRadius: '18px',
                   display: {sm: 'flex', md: 'none'},
                   flexDirection: 'column',
+                  overflow: 'auto',
               }}>
                   <ProfileBox user={props.user}/>
               </Box>

@@ -6,40 +6,51 @@ import Header from '../src/components/Header';
 import ProfileBox from '../src/components/ProfileBox';
 import MessageList from '../src/components/MessageList';
 import MessageForm from '../src/components/MessageForm';
-import { supabaseClient } from '../src/utils/supabase';
 import useGitHubUser from '../src/hooks/useGitHubUser';
 import toast, { Toaster } from 'react-hot-toast';
+import { 
+  supabaseClient,
+  listenerInsertedMessagesRealTime,
+  listenerDeletedMessagesRealTime, 
+} from '../src/services/supabase';
 
 export default function PaginaDoChat() {
   const router = useRouter();
   const usuarioLogado = router.query.username;
   const currentGithubUser = useGitHubUser(usuarioLogado);
-
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   
-  const getMessages = async () => {
-    const { data,error } = await supabaseClient.from('mensagens').select('*').order('id', {ascending: false});
-    data ? setMessages(data) : (
-      toast.error('Não foi possível encontrar as mensagens.') 
-      && console.log(error)
-    );
-    setIsLoading(false);
-  };
-
-  // const listenerMessagesRealTime = () => {
-  //   return supabaseClient.from('mensagens').on('*', payload => {
-  //     console.log('Change received!', payload.eventType);
-  //   }).subscribe();
-  // }
-  
   useEffect(()=>{
+    const getMessages = async () => {
+      const { data,error } = await supabaseClient.from('mensagens').select('*').order('id', {ascending: false});
+      data ? setMessages(data) : (
+        toast.error('Não foi possível encontrar as mensagens.') 
+        && console.log(error)
+      );
+      setIsLoading(false);
+    };
+
     getMessages();
-    // const subscription = listenerMessagesRealTime();
-    // return () => subscription.unsubscribe();
-  },[]);
- 
+
+  },[])
+
+  useEffect(()=> {
+    const subscription = listenerInsertedMessagesRealTime(mensagem => {
+      console.log(mensagem);
+      setMessages(prev =>[ mensagem, ...prev]);
+    })
+    return ()=> subscription.unsubscribe();
+  },[])
+
+  useEffect(()=> {
+    const subscription = listenerDeletedMessagesRealTime(id => {
+      setMessages(prev=>prev.filter(m=>m.id !== id));
+   })
+   return () => subscription.unsubscribe();
+  },[])
+
   const handleChangeMessage = (value) => setMessage(value)
   
   const handleSubmit = (texto) => { 
@@ -51,7 +62,7 @@ export default function PaginaDoChat() {
       // insert supabase
       supabaseClient.from('mensagens').insert(msg)
       .then(({data,error}) => {
-        data ? setMessages(prev => [data[0], ...prev]) 
+        data ? console.log('Mensagem enviada') 
         : (
           toast.error('Não foi possível enviar sua mensagem.')
           && console.log(error)
@@ -76,20 +87,15 @@ export default function PaginaDoChat() {
   }
 
   const handleRemoveMessage = (id) => {
-     let text = "Você realmente deseja remover esta mensagem?";
-     if (confirm(text) === true) {
-        // delete supabase
-        supabaseClient.from('mensagens').delete().match({ 'id': id })
-        .then(({ data, error }) => {
-          if(data){
-            const res = messages.filter(message => message.id !== data[0].id);
-            setMessages(res);
-          }else {
-            toast.error("Não foi possível deletar a mensagem. Tente mais tarde")
-            console.log(error);
-          }
-        });
-     }
+    // delete supabase
+    supabaseClient.from('mensagens').delete().match({ 'id': id })
+    .then(({ data, error }) => {
+      data ? console.log('Mensagem excluída')
+      :  (
+        toast.error("Não foi possível deletar a mensagem. Tente mais tarde")
+        && console.log(error)
+      )
+    }); 
   }
 
   return(
@@ -136,6 +142,7 @@ export default function PaginaDoChat() {
               flexDirection: 'column',
               width: {sm:'100%', md:'20%'},
               marginBottom: '10px',
+              maxHeight: '100%',
             }}
           > 
             <ProfileBox user={currentGithubUser}/>

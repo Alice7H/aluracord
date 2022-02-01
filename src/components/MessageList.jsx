@@ -1,10 +1,26 @@
+import { useState } from 'react';
 import { Box, Text, Image, Button } from '@skynexui/components';
 import appConfig from '../../config.json';
 import Loading from '../components/Loading';
+import ConfirmAlert from '../components/ConfirmAlert';
+import useOnClickOutside from '../hooks/useOnClickOutside';
 
 export default function MessageList(props) {
   const mensagens = props.mensagens || [];
   const handleRemoveMessage = props.onClick || null;
+  const [isOpenConfirmAlert, setIsOpenConfirmAlert] = useState(false);
+  const [removeId, setRemoveId] = useState(null);
+  useOnClickOutside('#confirmAlert', '#toggleConfirmAlert', ()=>setIsOpenConfirmAlert(false));
+ 
+  const handleOpenConfirmAlert = id => {
+    setIsOpenConfirmAlert(!isOpenConfirmAlert);
+    setRemoveId(id);
+  }
+
+  const handleDeleteMessage = () => {
+    handleRemoveMessage(removeId);
+    setIsOpenConfirmAlert(false);
+  }
 
   return (
     <>
@@ -18,7 +34,13 @@ export default function MessageList(props) {
           marginBottom: '16px', overflow: 'auto',
         }}
       >
-        {props.isLoading && <Loading user={props.user} />}
+        { props.isLoading ? <Loading user={props.user} />
+        : ( mensagem.length == 0 && 
+         <p style={{textAlign: 'center'}}>
+          Você não possui mensagens
+         </p>)
+        }
+
         {mensagens.length > 0 && mensagens.map(mensagem =>
           <Text
             key={mensagem?.id || 0}
@@ -63,11 +85,12 @@ export default function MessageList(props) {
                 tag="span"
               >
                 {(new Date().toLocaleDateString())}
-              </Text>
+              </Text>         
               <Button type='button' rounded="full" iconName="FaTrash"
-                onClick={() => handleRemoveMessage(mensagem.id)}
+                onClick={()=>handleOpenConfirmAlert(mensagem?.id)}
                 styleSheet={{ float: 'right', marginTop: '5px' }}
                 colorVariant="negative"
+                id="toggleConfirmAlert"
               />
             </Box>
             {
@@ -79,6 +102,29 @@ export default function MessageList(props) {
             }
           </Text>
         )}
+        { isOpenConfirmAlert && 
+          <Box 
+            id="confirmAlert"
+            styleSheet={{
+            backgroundColor: appConfig.theme.colors.neutrals['800'],
+            color: appConfig.theme.colors.neutrals['000'],
+            border: `2px ridge ${appConfig.theme.colors.neutrals['200']}`,
+            display: 'flex', 
+            flexDirection: 'column',
+            borderRadius: '5px', padding: '20px',
+            position: 'absolute', zIndex: 10, 
+            top: '18px', width: '80%',
+            textAlign: 'center', fontSize: '32px', 
+          }}>         
+            <ConfirmAlert           
+                handler={()=>setIsOpenConfirmAlert(false)}
+                fn={handleDeleteMessage}
+                text="Você deseja remover a mensagem?"
+                ok="SIM"
+                cancel="NÃO"
+              />
+          </Box>
+        }
         <style jsx>
         {`
           .hover-compatibility:hover {

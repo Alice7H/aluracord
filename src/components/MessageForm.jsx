@@ -22,8 +22,10 @@ export default function MessageForm(props) {
           alignItems: 'center',
           justifyContent: 'space-between',
         }}>
-          
-        <ButtonSendSticker onStickerClick={handleClickSticker}/>
+
+        <Box styleSheet={{position: 'relative',}}>
+          <ButtonSendSticker onStickerClick={handleClickSticker}/>
+        </Box> 
 
         <TextField as="textarea"
          label="Insira sua mensagem aqui..."
