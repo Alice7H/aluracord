@@ -33,14 +33,28 @@ As seguintes ferramentas/bibliotecas foram usadas na construção do projeto:
 
 ## Configuração do Supabase
 
-- Entrar com uma conta do GitHub
-- Criar um novo projeto
-- Criar um arquivo '.env.local' na pasta raiz do projeto com as seguintes informações do supabase: NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY
-- Guardar as informações de configuração de chave de API;
-- Em settings->Project settings->API->Project API keys->anon/public, copiar a chave e atribuir ao NEXT_PUBLIC_SUPABASE_ANON_KEY do arquivo de ambiente.
-- Em settings->Project settings->API->Config->URL, copiar a chave e atribuir ao NEXT_PUBLIC_SUPABASE_URL do arquivo de ambiente.
-- Criar uma nova tabela com o nome de 'mensagens'
-- Adicionar os campos 'id, create_at, de, texto' na tabela.
+- Entre com uma conta do GitHub.
+- Crie um novo projeto.
+- Crie uma nova tabela com o nome de "mensagens".
+- Adicione os campos "id, create_at, de, texto" na tabela.
+
+- Crie um arquivo '.env.local' na pasta raiz do projeto com as seguintes informações do supabase: NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY.
+
+### Chave e API URL
+
+1. Vá para a seção "Settings".
+2. Clique em "API" no menu lateral.
+3. Encontre a chave "anon" na parte "Project API keys" da página.
+4. Encontre sua API URL na parte de "Config" da página.
+5. Copie a chave ao NEXT_PUBLIC_SUPABASE_ANON_KEY do arquivo de ambiente.
+6. Copie a chave ao NEXT_PUBLIC_SUPABASE_URL do arquivo de ambiente.
+
+### Habilitar o supabase realtime
+
+1. Vá para a seção "Database".
+2. Clique em "Replication" no menu lateral.
+3. Controle quais eventos de banco de dados são enviados, habilitando com o botão de alternância Inserir/Atualizar/Excluir.
+4. Controle quais tabelas transmitem alterações clicando em "Source" e alternando as tabelas.
 
 ## Rodando o Aluracord
 
