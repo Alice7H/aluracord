@@ -4,10 +4,11 @@ import appConfig from '../../config.json';
 import Loading from '../components/Loading';
 import ConfirmAlert from '../components/ConfirmAlert';
 import useOnClickOutside from '../hooks/useOnClickOutside';
+import {supabaseClient} from '../services/supabase';
+import toast from 'react-hot-toast';
 
 export default function MessageList(props) {
   const mensagens = props.mensagens || [];
-  const handleRemoveMessage = props.onClick || null;
   const [isOpenConfirmAlert, setIsOpenConfirmAlert] = useState(false);
   const [removeId, setRemoveId] = useState(null);
   useOnClickOutside('#confirmAlert', '#toggleConfirmAlert', ()=>setIsOpenConfirmAlert(false));
@@ -17,8 +18,16 @@ export default function MessageList(props) {
     setRemoveId(id);
   }
 
-  const handleDeleteMessage = () => {
-    handleRemoveMessage(removeId);
+  const handleRemoveMessage = () => {
+    // delete supabase
+    supabaseClient.from('mensagens').delete().match({ 'id': removeId })
+    .then(({ data, error }) => {
+      data ? console.log('Mensagem excluída')
+      :  (
+        toast.error("Não foi possível deletar a mensagem. Tente mais tarde")
+        && console.log(error)
+      )
+    }); 
     setIsOpenConfirmAlert(false);
   }
 
@@ -85,13 +94,16 @@ export default function MessageList(props) {
                 tag="span"
               >
                 {(new Date().toLocaleDateString())}
-              </Text>         
-              <Button type='button' rounded="full" iconName="FaTrash"
-                onClick={()=>handleOpenConfirmAlert(mensagem?.id)}
-                styleSheet={{ float: 'right', marginTop: '5px' }}
-                colorVariant="negative"
-                id="toggleConfirmAlert"
-              />
+              </Text>
+              {
+                mensagem?.de === props.user
+                && <Button type='button' rounded="full" iconName="FaTrash"
+                  onClick={()=>handleOpenConfirmAlert(mensagem?.id)}
+                  styleSheet={{ float: 'right', marginTop: '5px' }}
+                  colorVariant="negative"
+                  id="toggleConfirmAlert"
+                />
+              }                 
             </Box>
             {
               mensagem.texto.startsWith(':sticker:')
@@ -118,7 +130,7 @@ export default function MessageList(props) {
           }}>         
             <ConfirmAlert           
                 handler={()=>setIsOpenConfirmAlert(false)}
-                fn={handleDeleteMessage}
+                fn={handleRemoveMessage}
                 text="Você deseja remover a mensagem?"
                 ok="SIM"
                 cancel="NÃO"

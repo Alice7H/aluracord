@@ -8,17 +8,12 @@ import MessageList from '../src/components/MessageList';
 import MessageForm from '../src/components/MessageForm';
 import useGitHubUser from '../src/hooks/useGitHubUser';
 import toast, { Toaster } from 'react-hot-toast';
-import { 
-  supabaseClient,
-  listenerInsertedMessagesRealTime,
-  listenerDeletedMessagesRealTime, 
-} from '../src/services/supabase';
+import { supabaseClient, listenerMessagesRealtime } from '../src/services/supabase';
 
 export default function PaginaDoChat() {
   const router = useRouter();
   const usuarioLogado = router.query.username;
   const currentGithubUser = useGitHubUser(usuarioLogado);
-  const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   
@@ -31,72 +26,20 @@ export default function PaginaDoChat() {
       );
       setIsLoading(false);
     };
-
     getMessages();
 
+    listenerMessagesRealtime(newMessage =>{
+      newMessage.eventType == 'INSERT'
+      && setMessages(prev=>[newMessage.new, ...prev]);
+      
+      newMessage.eventType == 'DELETE' 
+      && setMessages(prev=>prev.filter(m=>m.id !== newMessage.old.id));
+
+      newMessage.errors && console.log(newMessage.errors);
+    });
+    
+   return ()=> supabaseClient.removeAllSubscriptions();
   },[])
-
-  useEffect(()=> {
-    const subscription = listenerInsertedMessagesRealTime(mensagem => {
-      console.log(mensagem);
-      setMessages(prev =>[ mensagem, ...prev]);
-    })
-    return ()=> subscription.unsubscribe();
-  },[])
-
-  useEffect(()=> {
-    const subscription = listenerDeletedMessagesRealTime(id => {
-      setMessages(prev=>prev.filter(m=>m.id !== id));
-   })
-   return () => subscription.unsubscribe();
-  },[])
-
-  const handleChangeMessage = (value) => setMessage(value)
-  
-  const handleSubmit = (texto) => { 
-    const msg = {
-      de: usuarioLogado,
-      texto: texto,
-    }
-    if(texto != '' && usuarioLogado != null){
-      // insert supabase
-      supabaseClient.from('mensagens').insert(msg)
-      .then(({data,error}) => {
-        data ? console.log('Mensagem enviada') 
-        : (
-          toast.error('Não foi possível enviar sua mensagem.')
-          && console.log(error)
-        );
-      });
-
-      setMessage('');
-    }else{
-      toast.error('Insira sua mensagem');
-    }
-  }
-
-  const handleKeyPress = (event) => {
-    if(event.code === 'Enter') {
-      event.preventDefault();
-      handleSubmit(message);
-    }
-  }
-
-  const handleClickSticker = (sticker) => {
-    handleSubmit(`:sticker:${sticker}`);
-  }
-
-  const handleRemoveMessage = (id) => {
-    // delete supabase
-    supabaseClient.from('mensagens').delete().match({ 'id': id })
-    .then(({ data, error }) => {
-      data ? console.log('Mensagem excluída')
-      :  (
-        toast.error("Não foi possível deletar a mensagem. Tente mais tarde")
-        && console.log(error)
-      )
-    }); 
-  }
 
   return(
     <Box
@@ -154,18 +97,11 @@ export default function PaginaDoChat() {
           }}>
             <MessageList 
               mensagens={messages} 
-              onClick={handleRemoveMessage} 
               user={usuarioLogado}
               isLoading={isLoading}
             />
           
-            <MessageForm 
-              message={message} 
-              handleSubmit={handleSubmit} 
-              handleChangeMessage={handleChangeMessage}
-              handleEnter={handleKeyPress} 
-              handleClickSticker={handleClickSticker}
-            />
+            <MessageForm user={usuarioLogado}/>
           </Box>
         </Box> 
       </Box>

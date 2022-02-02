@@ -1,15 +1,45 @@
+import { useState } from 'react';
 import appConfig from '../../config.json';
 import { Box, Button, TextField } from '@skynexui/components';
 import ButtonSendSticker from '../components/ButtonSendSticker';
+import { supabaseClient } from '../services/supabase';
+import toast from 'react-hot-toast';
 
 export default function MessageForm(props) {
-  const { 
-    message, 
-    handleSubmit, 
-    handleChangeMessage, 
-    handleEnter,
-    handleClickSticker 
-  } = props;
+  const [message, setMessage] = useState('');
+
+  const handleKeyPress = (event) => {
+    if(event.code === 'Enter') {
+      event.preventDefault();
+      handleSubmit(message);
+    }
+  }
+
+  const handleChangeMessage = (value) => setMessage(value);
+  
+  const handleClickSticker = (sticker) => handleSubmit(`:sticker:${sticker}`);
+
+  const handleSubmit = (texto) => { 
+    const msg = {
+      de: props.user,
+      texto: texto,
+    }
+    if(texto != '' && props.user != null){
+      // insert supabase
+      supabaseClient.from('mensagens').insert(msg)
+      .then(({data,error}) => {
+        data ? console.log('Mensagem enviada') 
+        : (
+          toast.error('Não foi possível enviar sua mensagem.')
+          && console.log(error)
+        );
+      });
+
+      setMessage('');
+    }else{
+      toast.error('Insira sua mensagem');
+    }
+  }
 
   return (
     <>
@@ -41,7 +71,7 @@ export default function MessageForm(props) {
         }}
          value={message}
          onChange={(event)=>handleChangeMessage(event.target.value)}
-         onKeyPress={(event)=>handleEnter(event)}
+         onKeyPress={(event)=>handleKeyPress(event)}
          />
 
         <Button type='submit' iconName="FaPaperPlane" 
