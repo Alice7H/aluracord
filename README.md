@@ -29,7 +29,7 @@ As seguintes ferramentas/bibliotecas foram usadas na construção do projeto:
 - [Git](https://git-scm.com)
 - [Node.js](https://nodejs.org/en/)
 - um editor de código, como o [VSCode](https://code.visualstudio.com/)
-- [Supabase] (https://app.supabase.io/)
+- [Supabase](https://app.supabase.io/)
 
 ## Configuração do Supabase
 

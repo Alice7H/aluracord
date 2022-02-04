@@ -72,9 +72,17 @@ Para reusar um valor de referência (objeto/array), passe uma função para o se
 - Criar lista de seguidores e de quem sigo
 - Escutando o supabase realtime
 - FIXED BUG: Os texto no ProfileBox e no ConfirmAlert estão passando das caixas de texto
+- O usuário logado pode apagar apenas as suas próprias mensagens
+- Criado um balão de conversa na lista de mensagens
+- Autenticação com o github configurado no github e no supabase
+- Implementado o sign-in e sign-out
+- Página inicial modificada para entrar com conta do github
+- Adicionado outros stickers
 
 ## Futuro:
 
+- Bug: imagem do usuário da lista não exibe o zoom no hover do firefox
+- Responsividade e acessibilidade
 - Otimizar código
 - Fazer upload de imagens (.png, .jpeg, .gif)
 - Fazer upload de arquivos (.pdf, zz.txt, .doc, .excel)

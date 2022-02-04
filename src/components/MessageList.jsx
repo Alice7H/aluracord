@@ -4,7 +4,7 @@ import appConfig from '../../config.json';
 import Loading from '../components/Loading';
 import ConfirmAlert from '../components/ConfirmAlert';
 import useOnClickOutside from '../hooks/useOnClickOutside';
-import {supabaseClient} from '../services/supabase';
+import { deleteMessages } from '../services/supabaseMensagens';
 import toast from 'react-hot-toast';
 
 export default function MessageList(props) {
@@ -20,8 +20,7 @@ export default function MessageList(props) {
 
   const handleRemoveMessage = () => {
     // delete supabase
-    supabaseClient.from('mensagens').delete().match({ 'id': removeId })
-    .then(({ data, error }) => {
+    deleteMessages(removeId).then(({ data, error }) => {
       data ? console.log('Mensagem excluída')
       :  (
         toast.error("Não foi possível deletar a mensagem. Tente mais tarde")
@@ -44,36 +43,29 @@ export default function MessageList(props) {
         }}
       >
         { props.isLoading ? <Loading user={props.user} />
-        : ( mensagem.length == 0 && 
+        : ( mensagens.length == 0 && 
          <p style={{textAlign: 'center'}}>
           Você não possui mensagens
          </p>)
         }
 
         {mensagens.length > 0 && mensagens.map(mensagem =>
-          <Text
+          <li
             key={mensagem?.id || 0}
-            tag="li"
-            styleSheet={{
-              borderRadius: '5px', padding: '6px',
-              margin: '10px 20px 12px 20px',
-              backgroundColor: appConfig.theme.colors.neutrals[600],
-              hover: {
-                backgroundColor: appConfig.theme.colors.neutrals[800],
-              },
-            }}
+            className={props.user === mensagem.de ? 'bubbleLeft' : 'bubbleRight'}
           >
             <Box styleSheet={{ marginBottom: '8px', minHeight: '35px'}}>
-              <Image className="hover-compatibility"
+              <Image 
                 styleSheet={{
                   display: 'inline-block', borderRadius: '50%', cursor: 'pointer',              
-                  width: 'px', height: '25px', marginRight: '8px',  
+                  width: '25px', height: '25px', marginRight: '8px',  
                   hover: {
                     width: '200px', height: '200px', zIndex: 10, borderRadius: '8px',
-                    position: 'absolute', top: '20px', left: 'calc(50% - 100px)',
+                    position: 'fixed', top: '135px', left: 'calc(50% - 100px)',
                   }
                 }}
                 src={`https://github.com/${mensagem.de}.png`}
+                alt="Foto de quem enviou mensagem"
               />
               <Text tag="a" 
                 href={`http://github.com/${mensagem.de}`}
@@ -93,26 +85,26 @@ export default function MessageList(props) {
                 }}
                 tag="span"
               >
-                {(new Date().toLocaleDateString())}
+                {new Date(mensagem?.created_at).toLocaleDateString()}
               </Text>
               {
                 mensagem?.de === props.user
-                && <Button type='button' rounded="full" iconName="FaTrash"
+                && <Button type='button' rounded="full" iconName="times"
                   onClick={()=>handleOpenConfirmAlert(mensagem?.id)}
-                  styleSheet={{ float: 'right', marginTop: '5px' }}
+                  styleSheet={{ float: 'right', marginTop: '5px', marginBottom: '5px' }}
                   colorVariant="negative"
                   id="toggleConfirmAlert"
                 />
               }                 
             </Box>
             {
-              mensagem.texto.startsWith(':sticker:')
-            ? <Image src={mensagem.texto.replace(':sticker:', '')} 
+              mensagem?.texto.startsWith(':sticker:')
+            ? <Image src={mensagem?.texto.replace(':sticker:', '')} 
               styleSheet={{ maxHeight: '100px'}}
               />
-            : mensagem.texto
+            : mensagem?.texto
             }
-          </Text>
+          </li>
         )}
         { isOpenConfirmAlert && 
           <Box 
@@ -138,15 +130,46 @@ export default function MessageList(props) {
           </Box>
         }
         <style jsx>
-        {`
-          .hover-compatibility:hover {
-            border-radius: 8px;
-            position: absolute; 
-            top: 20px; 
-            left: calc(50% - 100px);
-            height: 200px; 
-            width: 200px; 
-            z-index: 10;
+        {` 
+          .bubbleLeft, 
+          .bubbleRight {
+            position: relative;
+            border: 1px solid ${appConfig.theme.colors.neutrals[700]};
+            border-radius: 10px; 
+            padding: 6px;
+            margin: 10px 20px 12px 20px;
+            background-color: ${appConfig.theme.colors.neutrals[700]};
+          }
+
+          .bubbleLeft:after, 
+          .bubbleRight:before {
+            content: '';
+            position: absolute;
+            border-style: solid;
+            border-color: transparent ${appConfig.theme.colors.neutrals[700]};
+            display: block;
+            width: 0;
+            z-index: 1;
+            top: calc(50% - 20px);
+          }
+          
+          .bubbleLeft:after{
+            left: -20px;
+            border-width: 20px 20px 20px 0;
+          }
+          .bubbleRight:before{
+            right: -20px;
+            border-width: 20px 0 20px 20px;
+          }
+        
+          .bubbleLeft:hover,
+          .bubbleRight:hover {
+            background-color: ${appConfig.theme.colors.neutrals[900]};
+          }
+
+          .bubbleLeft:hover:after,
+          .bubbleRight:hover:before {
+            border-color: transparent ${appConfig.theme.colors.neutrals[900]};
           }
         `}
         </style>

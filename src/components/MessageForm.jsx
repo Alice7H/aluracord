@@ -2,7 +2,7 @@ import { useState } from 'react';
 import appConfig from '../../config.json';
 import { Box, Button, TextField } from '@skynexui/components';
 import ButtonSendSticker from '../components/ButtonSendSticker';
-import { supabaseClient } from '../services/supabase';
+import { insertMessages } from '../services/supabaseMensagens';
 import toast from 'react-hot-toast';
 
 export default function MessageForm(props) {
@@ -26,8 +26,7 @@ export default function MessageForm(props) {
     }
     if(texto != '' && props.user != null){
       // insert supabase
-      supabaseClient.from('mensagens').insert(msg)
-      .then(({data,error}) => {
+      insertMessages(msg).then(({data,error}) => {
         data ? console.log('Mensagem enviada') 
         : (
           toast.error('Não foi possível enviar sua mensagem.')

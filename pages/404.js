@@ -1,13 +1,7 @@
-import { Box, Button, Text, Image } from '@skynexui/components';
-import { useRouter } from 'next/router';
+import { Box, Text, Image } from '@skynexui/components';
 import appConfig from '../config.json';
 
 export default function PaginaNaoEncontrada () {
-  const router = useRouter();
-
-  const handleBackToHome = () => {
-   router.push(`/`);
-  }
 
   return (
     <>
@@ -43,21 +37,6 @@ export default function PaginaNaoEncontrada () {
           fontSize: '24px', fontWeight: 'bold'}}>
            Página não encontrada
         </Text>
-        <Button
-          type='button'
-          label='Voltar ao início'
-          iconName="arrowLeft"
-          onClick={handleBackToHome}
-          buttonColors={{
-            contrastColor: appConfig.theme.colors.neutrals["000"],
-            mainColor: appConfig.theme.colors.primary[900],
-            mainColorLight: appConfig.theme.colors.primary[400],
-            mainColorStrong: appConfig.theme.colors.primary[600],
-          }}
-          styleSheet={{
-            marginBottom: '30px',
-          }}
-        />
       </Box>
     </Box>
     </>

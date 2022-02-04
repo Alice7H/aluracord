@@ -1,29 +1,34 @@
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
+import { useAuth } from '../src/hooks/useAuth';
+import HomePage from '../pages/index';
 import { Box } from '@skynexui/components';
 import appConfig from '../config.json';
 import Header from '../src/components/Header';
 import ProfileBox from '../src/components/ProfileBox';
 import MessageList from '../src/components/MessageList';
 import MessageForm from '../src/components/MessageForm';
+import Loading from '../src/components/Loading';
 import useGitHubUser from '../src/hooks/useGitHubUser';
 import toast, { Toaster } from 'react-hot-toast';
-import { supabaseClient, listenerMessagesRealtime } from '../src/services/supabase';
+import { selectMessages, listenerMessagesRealtime } from '../src/services/supabaseMensagens';
+import { supabaseClient } from '../src/utils/supabase';
 
 export default function PaginaDoChat() {
-  const router = useRouter();
-  const usuarioLogado = router.query.username;
-  const currentGithubUser = useGitHubUser(usuarioLogado);
+  const { user, userLoading } = useAuth();
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const usuarioLogado = user?.user_metadata?.user_name?.toLowerCase();
+  const currentGithubUser = useGitHubUser(usuarioLogado);
   
   useEffect(()=>{
-    const getMessages = async () => {
-      const { data,error } = await supabaseClient.from('mensagens').select('*').order('id', {ascending: false});
-      data ? setMessages(data) : (
-        toast.error('Não foi possível encontrar as mensagens.') 
-        && console.log(error)
-      );
+    const getMessages = () => {
+      selectMessages().then(({data,error})=>{
+        data ? setMessages(data) 
+        : (
+          toast.error('Não foi possível encontrar as mensagens.') 
+          && console.log(error)
+        );
+      }) 
       setIsLoading(false);
     };
     getMessages();
@@ -42,7 +47,13 @@ export default function PaginaDoChat() {
   },[])
 
   return(
-    <Box
+    <>
+    { 
+    (!usuarioLogado && userLoading)
+    ? <Loading />
+    : (!usuarioLogado && !userLoading && !user)
+    ? <HomePage />
+    : <Box
       styleSheet={{
         display: 'flex', alignItems: 'center', justifyContent: 'center', 
         backgroundColor: appConfig.theme.colors.primary['600'],
@@ -50,8 +61,9 @@ export default function PaginaDoChat() {
         backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 
         backgroundBlendMode: 'multiply',
         color: appConfig.theme.colors.neutrals['000'],
+        overflow: 'hidden', height: '100%',
       }}
-    >    
+    >  
       <Box 
         styleSheet={{
           backgroundColor: appConfig.theme.colors.neutrals['900'],
@@ -104,7 +116,9 @@ export default function PaginaDoChat() {
             <MessageForm user={usuarioLogado}/>
           </Box>
         </Box> 
-      </Box>
+      </Box> 
     </Box>
+    }
+    </>
   );
 }

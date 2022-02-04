@@ -1,14 +1,24 @@
 import { useState } from 'react';
+import { useAuth } from '../hooks/useAuth';
 import { Box, Text, Button } from '@skynexui/components';
 import appConfig from '../../config.json';
 import ProfileBox from '../components/ProfileBox';
 import useEscapeListen from '../hooks/useEscapeListen';
 import useOnClickOutside from '../hooks/useOnClickOutside';
+import { useRouter } from 'next/router';
 
 export default function Header(props) {
+  const  router = useRouter();
   const [isOpenProfile, setIsOpenProfile] = useState(false);
   useEscapeListen(()=>setIsOpenProfile(false))
   useOnClickOutside('#profileBox','#toggleOpenProfile', ()=>setIsOpenProfile(false));
+  const { signOut } = useAuth();
+
+  const handleSignOut = () => {
+    signOut().then(({error}) => {
+      !error && router.push('/');
+    })
+  }
 
   return (
       <>
@@ -46,7 +56,7 @@ export default function Header(props) {
               <Button
                 name="Sair"
                 iconName='FaSignOutAlt'
-                href="/"
+                onClick={handleSignOut}
                 buttonColors={{
                   contrastColor: appConfig.theme.colors.neutrals["000"],
                   mainColor: appConfig.theme.colors.primary[900],

@@ -1,12 +1,13 @@
 import GlobalStyle from "../src/components/GlobalStyle";
 import Head from 'next/head';
+import AuthProvider from "../src/contexts/AuthContext";
 
 export default function MyApp({ Component, pageProps }) {
   // roda em todas as páginas
   return (
     <>
      <Head>
-        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <link rel="shortcut icon" href="/images/favicon.ico" />
         <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png"/>
@@ -14,7 +15,9 @@ export default function MyApp({ Component, pageProps }) {
         <title>Aluracord</title>
       </Head>
       <GlobalStyle/>
-      <Component {...pageProps} />
+      <AuthProvider>
+        <Component {...pageProps} />
+      </AuthProvider>
     </>
   )
 }
